@@ -2,8 +2,8 @@ from rpi_ws281x import *
 
 class Matrix:
     def __init__(self, numRows, numCols, pin, brightness=100):
-        self.numRows = numRows
-        self.numCols = numCols
+        self.rows = numRows
+        self.cols = numCols
         self.strip = Adafruit_NeoPixel(numRows * numCols, pin, brightness=brightness)
 
     def __findIndex(self, row, col):
@@ -12,7 +12,7 @@ class Matrix:
         if row % 2 == 0:
             idx += col
         else:
-            idx += 46 - col
+            idx += 45 - col
 
         return idx
 
@@ -37,9 +37,9 @@ class Matrix:
         self.strip.setBrightness(brightness)
 
     def numRows(self):
-        return self.numRows
+        return self.rows
     
     def numCols(self):
-        return self.numCols
+        return self.cols
 
     

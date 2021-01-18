@@ -36,6 +36,12 @@ def colorWipe(matrix, color, wait_ms=2):
             matrix.show()
             time.sleep(wait_ms/1000.0)
 
+def clearMatrix(matrix):
+    for i in range(matrix.numRows()):
+        for j in range(matrix.numCols()):
+            matrix[i, j] = 0
+    matrix.show()
+
 # Main program logic follows:
 if __name__ == '__main__':
     matrix = Matrix(NUM_ROWS, NUM_COLS, LED_PIN, brightness=LED_BRIGHTNESS)
@@ -60,5 +66,5 @@ if __name__ == '__main__':
             # theaterChaseRainbow(strip)
 
     except KeyboardInterrupt:
-        colorWipe(matrix, getColor(0,0,0), 1)
+        clearMatrix(matrix)
 
