@@ -66,6 +66,11 @@ def horizontalStripes(matrix, color, stripe_length=5, area_width=200, wait_ms=2)
 
 # Main program logic follows:
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-hs', '--horizontalStripes', action='store_true', help='display horizontal stripes animation')
+    parser.add_argument('-cw', '--colorWipe', action='store_true', help='display color wipe animation')
+    args = parser.parse_args()
+
     matrix = Matrix(NUM_ROWS, NUM_COLS, LED_PIN, brightness=LED_BRIGHTNESS)
     # Intialize the library (must be called once before other functions).
     matrix.begin()
@@ -74,11 +79,16 @@ if __name__ == '__main__':
 
     try:
         while True:
-            print ('Shooting star animations.')
-            # colorWipe(matrix, getColor(180, 0, 0))  # Red wipe
-            # colorWipe(matrix, getColor(0, 180, 0))  # Green wipe
-            # colorWipe(matrix, getColor(0, 0, 180))  # Blue wipe
-            horizontalStripes(matrix, getColor(0, 0, 180), stripe_length=8, area_width=100, wait_ms=1)
+            if (args.colorWipe):
+                print("Color wipe animation")
+                colorWipe(matrix, getColor(180, 0, 0))  # Red wipe
+                # colorWipe(matrix, getColor(180, 0, 0))  # Red wipe
+                # colorWipe(matrix, getColor(0, 180, 0))  # Green wipe
+                # colorWipe(matrix, getColor(0, 0, 180))  # Blue wipe
+            elif (args.horizontalStripes):
+                print ('Shooting star animations.')
+                horizontalStripes(matrix, getColor(0, 0, 180), stripe_length=8, area_width=100, wait_ms=1)
+            
 
     except KeyboardInterrupt:
         clearMatrix(matrix)
