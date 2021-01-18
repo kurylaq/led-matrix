@@ -15,11 +15,11 @@ LED_PIN        = 18      # GPIO pin connected to the pixels (18 uses PWM!).
 #LED_PIN        = 10      # GPIO pin connected to the pixels (10 uses SPI /dev/spidev0.0).
 LED_FREQ_HZ    = 800000  # LED signal frequency in hertz (usually 800khz)
 LED_DMA        = 10      # DMA channel to use for generating signal (try 10)
-LED_BRIGHTNESS = 180     # Set to 0 for darkest and 255 for brightest
+LED_BRIGHTNESS = 50     # Set to 0 for darkest and 255 for brightest
 LED_INVERT     = False   # True to invert the signal (when using NPN transistor level shift)
 LED_CHANNEL    = 0       # set to '1' for GPIOs 13, 19, 41, 45 or 53
 
-MAX_BRIGHTNESS = 0.05
+MAX_BRIGHTNESS = 1
 
 def muted_color(input_color):
     white = int((input_color >> 24) * MAX_BRIGHTNESS)
@@ -99,11 +99,8 @@ if __name__ == '__main__':
     strip.begin()
 
     print ('Press Ctrl-C to quit.')
-    if not args.clear:
-        print('Use "-c" argument to clear LEDs on exit')
 
     try:
-
         while True:
             print ('Color wipe animations.')
             #colorWipe(strip, Color(180, 0, 0))  # Red wipe
@@ -119,5 +116,4 @@ if __name__ == '__main__':
             theaterChaseRainbow(strip)
 
     except KeyboardInterrupt:
-        if args.clear:
-            colorWipe(strip, Color(0,0,0), 0.01)
+        colorWipe(strip, Color(0,0,0), 0)
