@@ -37,22 +37,24 @@ def colorWipe(matrix, color, wait_ms=2):
             time.sleep(wait_ms/1000.0)
 
 def clearMatrix(matrix):
+    """Quickly set all color values in the matrix to 0 and show"""
     for i in range(matrix.numRows()):
         for j in range(matrix.numCols()):
             matrix[i, j] = 0
     matrix.show()
 
-def shootingStars(matrix, color, length=200, wait_ms=2):
-    offsets = [((43 ** i) >> 3) % length for i in range(matrix.numRows())]
+def horizontalStripes(matrix, color, stripe_length=5, area_width=200, wait_ms=2):
+    """Low-brightness animation to display a loop of horizontal stripes 
+    travelling from left to right
+    """
+    
+    offsets = [((43 ** i) >> 3) % area_width for i in range(matrix.numRows())]
 
-    for i in range(length):
-        for j in range(matrix.numRows()):
-            for k in range(matrix.numCols()):
-                matrix[j, k] = 0
-
+    for i in range(area_width):
         for j, offset in enumerate(offsets):
-            for k in range(5):
-                currPos = (offset + k) % length
+            matrix[j, (offset - 1 + area_width) % area_width] = 0
+            for k in range(stripe_length):
+                currPos = (offset + k) % area_width
                 if currPos >= 0 and currPos < matrix.numCols():
                     matrix[j, currPos] = color
             offsets[j] += 1
@@ -76,7 +78,7 @@ if __name__ == '__main__':
             # colorWipe(matrix, getColor(180, 0, 0))  # Red wipe
             # colorWipe(matrix, getColor(0, 180, 0))  # Green wipe
             # colorWipe(matrix, getColor(0, 0, 180))  # Blue wipe
-            shootingStars(matrix, getColor(0, 0, 180))
+            horizontalStripes(matrix, getColor(0, 0, 180), stripe_length=8, area_width=100, wait_ms=1)
 
     except KeyboardInterrupt:
         clearMatrix(matrix)
