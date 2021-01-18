@@ -42,7 +42,7 @@ def clearMatrix(matrix):
             matrix[i, j] = 0
     matrix.show()
 
-def shootingStars(matrix, color, length=200):
+def shootingStars(matrix, color, length=200, wait_ms=2):
     offsets = [hash(i + 0.1) % length for i in range(matrix.numCols())]
 
     for i in range(length):
@@ -56,6 +56,7 @@ def shootingStars(matrix, color, length=200):
                 if currPos >= 0 and currPos < matrix.numCols():
                     matrix[n, currPos] = color
     matrix.show()
+    time.sleep(wait_ms/1000.0)
 
 
 
