@@ -43,20 +43,22 @@ def clearMatrix(matrix):
     matrix.show()
 
 def shootingStars(matrix, color, length=200, wait_ms=2):
-    offsets = [hash(i + 0.1) % length for i in range(matrix.numCols())]
+    offsets = [((43 ** i) >> 3) % length for i in range(matrix.numRows())]
 
     for i in range(length):
         for j in range(matrix.numRows()):
             for k in range(matrix.numCols()):
                 matrix[j, k] = 0
 
-        for n, offset in enumerate(offsets):
-            for j in range(5):
-                currPos = (offset + j) % length
+        for j, offset in enumerate(offsets):
+            for k in range(5):
+                currPos = (offset + k) % length
                 if currPos >= 0 and currPos < matrix.numCols():
-                    matrix[n, currPos] = color
-    matrix.show()
-    time.sleep(wait_ms/1000.0)
+                    matrix[j, currPos] = color
+            offsets[j] += 1
+        
+        matrix.show()
+        time.sleep(wait_ms/1000.0)
 
 
 
@@ -72,9 +74,9 @@ if __name__ == '__main__':
         while True:
             print ('Shooting star animations.')
             # colorWipe(matrix, getColor(180, 0, 0))  # Red wipe
-            # colorWipe(matrix, getColor(0, 180, 0))  # Blue wipe
-            # colorWipe(matrix, getColor(0, 0, 180))  # Green wipe
-            shootingStars(matrix, getColor(0, 0, 128))
+            # colorWipe(matrix, getColor(0, 180, 0))  # Green wipe
+            # colorWipe(matrix, getColor(0, 0, 180))  # Blue wipe
+            shootingStars(matrix, getColor(0, 0, 180))
 
     except KeyboardInterrupt:
         clearMatrix(matrix)
