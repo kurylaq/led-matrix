@@ -42,6 +42,23 @@ def clearMatrix(matrix):
             matrix[i, j] = 0
     matrix.show()
 
+def shootingStars(matrix, color, length=200):
+    offsets = [hash(i + 0.1) % length for i in range(matrix.numCols())]
+
+    for i in range(length):
+        for j in range(matrix.numRows()):
+            for k in range(matrix.numCols()):
+                matrix[j, k] = 0
+
+        for n, offset in enumerate(offsets):
+            for j in range(5):
+                currPos = (offset + j) % length
+                if currPos >= 0 and currPos < matrix.numCols():
+                    matrix[n, currPos] = color
+    matrix.show()
+
+
+
 # Main program logic follows:
 if __name__ == '__main__':
     matrix = Matrix(NUM_ROWS, NUM_COLS, LED_PIN, brightness=LED_BRIGHTNESS)
@@ -52,18 +69,11 @@ if __name__ == '__main__':
 
     try:
         while True:
-            print ('Color wipe animations.')
-            colorWipe(matrix, getColor(180, 0, 0))  # Red wipe
-            colorWipe(matrix, getColor(0, 180, 0))  # Blue wipe
-            colorWipe(matrix, getColor(0, 0, 180))  # Green wipe
-            #print ('Theater chase animations.')
-            #theaterChase(strip, Color(127, 127, 127))  # White theater chase
-            #theaterChase(strip, Color(127,   0,   0))  # Red theater chase
-            #theaterChase(strip, Color(  0,   0, 127))  # Blue theater chase
-            # print ('Rainbow animations.')
-            #rainbow(strip)
-            # rainbowCycle(strip)
-            # theaterChaseRainbow(strip)
+            print ('Shooting star animations.')
+            # colorWipe(matrix, getColor(180, 0, 0))  # Red wipe
+            # colorWipe(matrix, getColor(0, 180, 0))  # Blue wipe
+            # colorWipe(matrix, getColor(0, 0, 180))  # Green wipe
+            shootingStars(matrix, getColor(0, 0, 128))
 
     except KeyboardInterrupt:
         clearMatrix(matrix)
