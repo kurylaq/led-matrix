@@ -1,6 +1,6 @@
 import time
 import argparse
-from matrix import Matrix
+from dummy_matrix import DummyMatrix
 
 # LED Matrix configuration:
 NUM_ROWS       = 26      # Number of rows in our LED Matrix
@@ -52,10 +52,14 @@ def horizontalStripes(matrix, color, stripe_length=5, area_width=200, wait_ms=2)
 
     for i in range(area_width):
         for j, offset in enumerate(offsets):
-            matrix[j, (offset - 1 + area_width) % area_width] = 0
+            prevPos = (offset - 1 + area_width) % area_width
+            if prevPos >= 0 and prevPos < matrix.numCols():
+                matrix[j, prevPos] = 0
+
             for k in range(stripe_length):
                 currPos = (offset + k) % area_width
                 if currPos >= 0 and currPos < matrix.numCols():
+                    print_color = matrix[j, currPos]
                     matrix[j, currPos] = color
             offsets[j] += 1
         
@@ -71,7 +75,7 @@ if __name__ == '__main__':
     parser.add_argument('-cw', '--colorWipe', action='store_true', help='display color wipe animation')
     args = parser.parse_args()
 
-    matrix = Matrix(NUM_ROWS, NUM_COLS, LED_PIN, brightness=LED_BRIGHTNESS)
+    matrix = DummyMatrix(NUM_ROWS, NUM_COLS, LED_PIN, brightness=LED_BRIGHTNESS)
     # Intialize the library (must be called once before other functions).
     matrix.begin()
 
@@ -87,7 +91,7 @@ if __name__ == '__main__':
                 # colorWipe(matrix, getColor(0, 0, 180))  # Blue wipe
             elif (args.horizontalStripes):
                 print ('Shooting star animations.')
-                horizontalStripes(matrix, getColor(0, 0, 180), stripe_length=8, area_width=100, wait_ms=1)
+                horizontalStripes(matrix, getColor(0, 0, 180), stripe_length=8, area_width=200, wait_ms=10)
             
 
     except KeyboardInterrupt:
