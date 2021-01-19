@@ -1,5 +1,5 @@
-from graphics import *
-from abstract_matrix import Matrix
+from .graphics import *
+from .abstract_matrix import Matrix
 
 PIXEL_SIZE = 20
 

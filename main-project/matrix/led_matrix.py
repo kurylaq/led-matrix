@@ -1,5 +1,5 @@
 from rpi_ws281x import *
-from abstract_matrix import Matrix
+from .abstract_matrix import Matrix
 
 class LEDMatrix(Matrix):
     def __init__(self, numRows, numCols, pin=18, brightness=100):
