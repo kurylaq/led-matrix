@@ -79,15 +79,8 @@ def bulbasaur(matrix, image_processor, path1, path2, wait_ms=50):
     bulbasaur1 = image_processor.loadPNG(path1)
     bulbasaur2 = image_processor.loadPNG(path2)
 
-    # print(bulbasaur1)
-
-    print(bulbasaur1)
     for i in range(matrix.numRows()):
         for j in range(matrix.numCols()):
-            # print("bulbasaur1:", type(bulbasaur1[i][j]))
-            # print(bulbasaur1[i][j])
-            # print("bulbasaur2:", type(bulbasaur2[i][j]))
-            # print(bulbasaur2[i][j])
             matrix[i, j] = getColor(*bulbasaur1[i][j])
 
     matrix.show()
@@ -130,7 +123,7 @@ if __name__ == '__main__':
             elif (args.bulbasaur):
                 print("bulbasaur animation")
                 base_path = "../images/pokemon/"
-                bulbasaur(matrix, ImageProcessor(), base_path + "bulbasaur1_trans.png", base_path + "bulbasaur2_trans.png")
+                bulbasaur(matrix, ImageProcessor(), base_path + "bulbasaur1_trans.png", base_path + "bulbasaur2_trans.png", wait_ms=200)
 
             
 
