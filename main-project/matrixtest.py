@@ -18,7 +18,8 @@ def getColor(red, green, blue, white=0):
     Each color component should be a value 0-255 where 0 is the lowest intensity
     and 255 is the highest intensity.
     """
-    return (white << 24) | (red << 16) | (green << 8) | blue
+    
+    return (int(white) << 24) | (int(red) << 16) | (int(green) << 8) | int(blue)
 
 def getRGBValues(color):
     """Convert the unsigned integer representation of color into its red, green, 
@@ -120,7 +121,7 @@ if __name__ == '__main__':
             elif (args.bulbasaur):
                 print("bulbasaur animation")
                 base_path = "../images/pokemon/"
-                bulbasaur(matrix, ImageProcessor(), base_path + "bulbasaur1.png", base_path + "bulbasaur2.png")
+                bulbasaur(matrix, ImageProcessor(), base_path + "bulbasaur1_trans.png", base_path + "bulbasaur2_trans.png")
 
             
 

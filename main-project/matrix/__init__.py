@@ -1,6 +1,9 @@
 from .abstract_matrix import Matrix
 from .led_matrix import LEDMatrix
-from .dummy_matrix import DummyMatrix
-from .graphics import *
+try:
+    from .dummy_matrix import DummyMatrix
+    from .graphics import *
+except:
+    print("Error importing dummy matrix")
 
 __all__ = ['abstract_matrix', 'dummy_matrix', 'led_matrix']
