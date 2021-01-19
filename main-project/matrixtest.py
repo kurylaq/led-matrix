@@ -3,7 +3,11 @@ import argparse
 import numpy as np
 
 # from matrix import dummy_matrix
-from matrix import LEDMatrix as Matrix
+try:
+    from matrix import LEDMatrix as Matrix
+except:
+    from matrix import DummyMatrix as Matrix
+
 from image_processing import ImageProcessor
 
 # LED Matrix configuration:
@@ -77,8 +81,13 @@ def bulbasaur(matrix, image_processor, path1, path2, wait_ms=50):
 
     # print(bulbasaur1)
 
+    print(bulbasaur1)
     for i in range(matrix.numRows()):
         for j in range(matrix.numCols()):
+            # print("bulbasaur1:", type(bulbasaur1[i][j]))
+            # print(bulbasaur1[i][j])
+            # print("bulbasaur2:", type(bulbasaur2[i][j]))
+            # print(bulbasaur2[i][j])
             matrix[i, j] = getColor(*bulbasaur1[i][j])
 
     matrix.show()

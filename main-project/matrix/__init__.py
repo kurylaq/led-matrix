@@ -1,5 +1,10 @@
 from .abstract_matrix import Matrix
-from .led_matrix import LEDMatrix
+
+try:
+    from .led_matrix import LEDMatrix
+except:
+    print("Error importing LED matrix")
+
 try:
     from .dummy_matrix import DummyMatrix
     from .graphics import *
