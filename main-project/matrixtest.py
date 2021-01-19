@@ -1,6 +1,6 @@
 import time
 import argparse
-from dummy_matrix import DummyMatrix
+from led_matrix import LEDMatrix as Matrix
 
 # LED Matrix configuration:
 NUM_ROWS       = 26      # Number of rows in our LED Matrix
@@ -75,7 +75,7 @@ if __name__ == '__main__':
     parser.add_argument('-cw', '--colorWipe', action='store_true', help='display color wipe animation')
     args = parser.parse_args()
 
-    matrix = DummyMatrix(NUM_ROWS, NUM_COLS, LED_PIN, brightness=LED_BRIGHTNESS)
+    matrix = Matrix(NUM_ROWS, NUM_COLS, LED_PIN, brightness=LED_BRIGHTNESS)
     # Intialize the library (must be called once before other functions).
     matrix.begin()
 
