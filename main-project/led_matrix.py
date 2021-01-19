@@ -1,9 +1,9 @@
 from rpi_ws281x import *
+from abstract_matrix import Matrix
 
-class Matrix:
-    def __init__(self, numRows, numCols, pin, brightness=100):
-        self.rows = numRows
-        self.cols = numCols
+class LEDMatrix(Matrix):
+    def __init__(self, numRows, numCols, pin=18, brightness=100):
+        super().__init__(numRows, numCols)
         self.strip = Adafruit_NeoPixel(numRows * numCols, pin, brightness=brightness)
 
     def __findIndex(self, row, col):
@@ -35,11 +35,5 @@ class Matrix:
 
     def setBrightness(self, brightness):
         self.strip.setBrightness(brightness)
-
-    def numRows(self):
-        return self.rows
-    
-    def numCols(self):
-        return self.cols
 
     
