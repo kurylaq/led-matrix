@@ -15,7 +15,7 @@ NUM_ROWS       = 26      # Number of rows in our LED Matrix
 NUM_COLS       = 46      # Number of columns in our LED Matrix
 LED_PIN        = 18      # GPIO pin connected to the pixels (18 uses PWM!).
 #LED_PIN        = 10      # GPIO pin connected to the pixels (10 uses SPI /dev/spidev0.0)
-LED_BRIGHTNESS = 50 
+LED_BRIGHTNESS = 150 
 
 def getColor(red, green, blue, white=0):
     """Convert the provided red, green, blue color to a 24-bit color value.
@@ -143,7 +143,7 @@ if __name__ == '__main__':
         elif (args.materialsTest):
             while True:
                 print("materialsTest animation")
-                materialsTest(matrix)
+                materialsTest(matrix, color_list=[(0, 0, 180), (180, 0, 0), (0, 180, 0), (180, 180, 0), (180, 0, 180), (0, 180, 180)])
 
     except KeyboardInterrupt:
         clearMatrix(matrix)
