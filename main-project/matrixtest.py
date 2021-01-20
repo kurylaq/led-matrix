@@ -94,17 +94,25 @@ def bulbasaur(matrix, image_processor, path1, path2, wait_ms=50):
     time.sleep(wait_ms/1000.0)
 
 def materialsTest(matrix, color_list=[(0, 0, 180), (180, 0, 0), (0, 180, 0)]):
+    positions = [(14, 43), (14, 44)].extend([(i, 45) for i in range(12, 17)])
+    num_iters = 0
 
-    for color in color_list:
-        uint_color = getColor(*color)
-        for j in range(12, 17):
-            matrix[j, 45] = uint_color
-        
-        matrix[14, 43] = uint_color
-        matrix[14, 44] = uint_color
-
+    while True:
+        for n, (i, j) in enumerate(positions):
+            matrix[i, j] = getColor(*color_list[(n + num_iters) % len(color_list)])
+        num_iters += 1
         matrix.show()
         time.sleep(2)
+    # for color in color_list:
+    #     while True:
+    #     for n, (i, j) in enumerate(positions):
+    #     uint_color = getColor(*color)
+    #     for j in range(12, 17):
+    #         matrix[j, 45] = uint_color
+    #     matrix[14, 43] = uint_color
+    #     matrix[14, 44] = uint_color
+    #     matrix.show()
+    #     time.sleep(2)
 
 
 
@@ -143,7 +151,7 @@ if __name__ == '__main__':
         elif (args.materialsTest):
             while True:
                 print("materialsTest animation")
-                materialsTest(matrix, color_list=[(0, 0, 180), (180, 0, 0), (0, 180, 0), (180, 180, 0), (180, 0, 180), (0, 180, 180)])
+                materialsTest(matrix, color_list=[(0, 0, 180), (180, 0, 0), (0, 180, 0), (180, 180, 0), (180, 0, 180), (0, 180, 180), (0, 0, 0)])
 
     except KeyboardInterrupt:
         clearMatrix(matrix)
