@@ -93,6 +93,19 @@ def bulbasaur(matrix, image_processor, path1, path2, wait_ms=50):
     matrix.show()
     time.sleep(wait_ms/1000.0)
 
+def materialsTest(matrix, color_list=[(0, 0, 180), (180, 0, 0), (0, 180, 0)]):
+
+    for color in color_list:
+        uint_color = getColor(*color)
+        for j in range(12, 17):
+            matrix[j, 45] = uint_color
+        
+        matrix[14, 43] = uint_color
+        matrix[14, 44] = uint_color
+
+        matrix.show()
+        time.sleep(2)
+
 
 
 # Main program logic follows:
@@ -100,7 +113,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-hs', '--horizontalStripes', action='store_true', help='display horizontal stripes animation')
     parser.add_argument('-cw', '--colorWipe', action='store_true', help='display color wipe animation')
-    parser.add_argument('-b', '--bulbasaur', action='store_true', help='display color wipe animation')
+    parser.add_argument('-b', '--bulbasaur', action='store_true', help='display bulbasaur animation')
+    parser.add_argument('-mt', '--materialsTest', action='store_true', help='display materialsTest animation')
     args = parser.parse_args()
 
     matrix = Matrix(NUM_ROWS, NUM_COLS, LED_PIN, brightness=LED_BRIGHTNESS)
@@ -110,22 +124,26 @@ if __name__ == '__main__':
     print ('Press Ctrl-C to quit.')
 
     try:
-        while True:
-            if (args.colorWipe):
+        if (args.colorWipe):
+            while True:
                 print("Color wipe animation")
                 colorWipe(matrix, getColor(180, 0, 0))  # Red wipe
                 # colorWipe(matrix, getColor(180, 0, 0))  # Red wipe
                 # colorWipe(matrix, getColor(0, 180, 0))  # Green wipe
                 # colorWipe(matrix, getColor(0, 0, 180))  # Blue wipe
-            elif (args.horizontalStripes):
+        elif (args.horizontalStripes):
+            while True:
                 print ('Shooting star animations')
                 horizontalStripes(matrix, getColor(0, 0, 180), stripe_length=8, area_width=200, wait_ms=10)
-            elif (args.bulbasaur):
+        elif (args.bulbasaur):
+            while True:
                 print("bulbasaur animation")
                 base_path = "../images/pokemon/"
                 bulbasaur(matrix, ImageProcessor(), base_path + "bulbasaur1_trans.png", base_path + "bulbasaur2_trans.png", wait_ms=200)
-
-            
+        elif (args.materialsTest):
+            while True:
+                print("materialsTest animation")
+                materialsTest(matrix)
 
     except KeyboardInterrupt:
         clearMatrix(matrix)
