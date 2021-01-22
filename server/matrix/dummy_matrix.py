@@ -3,24 +3,6 @@ from .abstract_matrix import Matrix
 
 PIXEL_SIZE = 20
 
-def getColor(red, green, blue, white=0):
-    """Convert the provided red, green, blue color to a 24-bit color value.
-    Each color component should be a value 0-255 where 0 is the lowest intensity
-    and 255 is the highest intensity.
-    """
-    return (white << 24) | (red << 16) | (green << 8) | blue
-
-def getRGBValues(color):
-    """Convert the unsigned integer representation of color into its red, green, 
-    blue (and white) components
-    """
-    white = color >> 24
-    red = (color >> 16) & 255
-    green = (color >> 8) & 255
-    blue = color & 255
-
-    return red, green, blue, white
-
 class DummyMatrix(Matrix):
     def __init__(self, numRows, numCols, pin=18, brightness=100):
         super().__init__(numRows, numCols)
@@ -72,7 +54,7 @@ class DummyMatrix(Matrix):
         # apply all changes in the buffer
         for i in self.buffer:
             for j in self.buffer[i]:
-                r, g, b, _ = getRGBValues(self.buffer[i][j])
+                r, g, b, _ = self.getRGBValues(self.buffer[i][j])
                 self.matrix[i][j].setFill(color_rgb(r, g, b))
 
         # reset the buffer

@@ -5,6 +5,24 @@ class Matrix(ABC):
         self.rows = numRows
         self.cols = numCols
 
+    def getColor(self, red, green, blue, white=0):
+        """Convert the provided red, green, blue color to a 24-bit color value.
+        Each color component should be a value 0-255 where 0 is the lowest intensity
+        and 255 is the highest intensity.
+        """
+        return (white << 24) | (red << 16) | (green << 8) | blue
+
+    def getRGBValues(self, color):
+        """Convert the unsigned integer representation of color into its red, green, 
+        blue (and white) components
+        """
+        white = color >> 24
+        red = (color >> 16) & 255
+        green = (color >> 8) & 255
+        blue = color & 255
+
+        return red, green, blue, white
+
     @abstractmethod
     def __getitem__(self, index):
         """Get the color at index (row, col)"""
