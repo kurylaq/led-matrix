@@ -90,8 +90,8 @@ class ConnectionManagerProcess(Process):
         
         app = web.Application()
         app.add_routes([web.get('/', self.handle),
-                        web.get('/index.html', self.handle),
-                        web.get('/ws', self.websocketHandler)])
+                        web.get('/ws', self.websocketHandler),
+                        web.get('/{name}', self.handle)])
         
         # start_server = websockets.serve(self.counter, "localhost", 6789)
 
