@@ -26,7 +26,7 @@ class ActionManager(object):
                 'action' not in data:
             self.updateState(data)
         else:
-            self.clearState()
+            # self.clearState()
             self.updateState(data)
             self.curr_idx += 1
             self.state['idx'] = self.curr_idx
