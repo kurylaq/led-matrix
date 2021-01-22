@@ -1,9 +1,8 @@
 import asyncio
 import json
 import logging
-import websockets
 from multiprocessing import Process
-from aiohttp import web
+from aiohttp import web, WSMsgType
 
 class ConnectionManagerProcess(Process):
     def __init__(self, pipe_conn):
@@ -47,19 +46,37 @@ class ConnectionManagerProcess(Process):
     async def sendData(self, data):
         self.pipe_conn.send(data)
 
-    async def counter(self, websocket, path):
-        # register(websocket) sends user_event() to websocket
-        await self.register(websocket)
+    async def websocketHandler(self, request):
+        ws = web.WebSocketResponse()
+        await self.register(ws)
         try:
-            await websocket.send(json.dumps({"type": "state", "value": 1}))
-            async for message in websocket:
-                data = json.loads(message)
-                if "action" in data or 'settings' in data:
-                    await self.sendData(data)
-                else:
-                    logging.error("unsupported event: {}", data)
+            await ws.prepare(request)
+            await ws.send_str(json.dumps({"type": "state", "value": 1}))
+
+            async for msg in ws:
+                if msg.type == WSMsgType.TEXT:
+                    data = json.loads(msg.data)
+                    if "action" in data or 'settings' in data:
+                        await self.sendData(data)
+                    else:
+                        logging.error("unsupported event: {}", data)
+                elif msg.type == WSMsgType.ERROR:
+                    print('ws connection closed with exception %s' %
+                        ws.exception())
         finally:
-            await self.unregister(websocket)
+            await self.unregister(ws)
+            print('websocket connection closed')
+
+    # async def counter(self, websocket, path):
+    #     # register(websocket) sends user_event() to websocket
+    #     await self.register(websocket)
+    #     try:
+    #         await websocket.send(json.dumps({"type": "state", "value": 1}))
+    #         async for message in websocket:
+    #             data = json.loads(message)
+                
+    #     finally:
+    #         await self.unregister(websocket)
 
     async def handle(self, request):
         with open('./site/index.html', 'r') as file:
@@ -73,9 +90,10 @@ class ConnectionManagerProcess(Process):
         
         app = web.Application()
         app.add_routes([web.get('/', self.handle),
-                        web.get('/{name}', self.handle)])
+                        web.get('/index.html', self.handle),
+                        web.get('/ws', self.websocketHandler)])
         
-        start_server = websockets.serve(self.counter, "localhost", 6789)
+        # start_server = websockets.serve(self.counter, "localhost", 6789)
 
         try:
             runner = web.AppRunner(app)
@@ -83,7 +101,7 @@ class ConnectionManagerProcess(Process):
             site = web.TCPSite(runner, 'localhost', 8080)
             self.event_loop.run_until_complete(site.start())
 
-            self.event_loop.run_until_complete(start_server)
+            # self.event_loop.run_until_complete(start_server)
             self.event_loop.run_until_complete(self.check_for_end_condition())
             
             self.event_loop.run_forever()

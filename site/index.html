@@ -79,10 +79,15 @@
                 clear = document.querySelector('#clear'),
 
                 colorPicker = document.querySelector('#colorPicker'),
-                myRange = document.querySelector('#myRange')
+                myRange = document.querySelector('#myRange'),
 
 
-                websocket = new WebSocket("ws://127.0.0.1:6789/");
+                websocket = new WebSocket("ws://" + window.location.host + "/ws");
+
+            websocket.onopen = function (event) {
+                console.log("Websocket connected at: " + window.location.host)
+            }
+
             minus.onclick = function (event) {
                 websocket.send(JSON.stringify({action: 'minus'}));
             }
