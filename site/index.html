@@ -47,12 +47,20 @@
         <div class="state">
             <span class="users">?</span> online
         </div>
+        <div>
+            <input type="color" id="colorPicker" name="colorPicker"
+                   value="#1e00b4">
+            <label for="colorPicker">color</label>
+        </div>
         <div class="buttons">
           <div class="button" id="colorWipe">Color Wipe</div>
         </div>
         <div class="buttons">
           <div class="button" id="horizontalStripes">Horizontal Stripes</div>
         </div>
+            <div class="slidecontainer">
+                <input type="range" min="1" max="40" value="5" class="slider" id="myRange">
+            </div>
         <div class="buttons">
           <div class="button" id="bulbasaur">Bulbasaur</div>
         </div>
@@ -69,6 +77,10 @@
                 horizontalStripes = document.querySelector('#horizontalStripes'),
                 bulbasaur = document.querySelector('#bulbasaur'),
                 clear = document.querySelector('#clear'),
+
+                colorPicker = document.querySelector('#colorPicker'),
+                myRange = document.querySelector('#myRange')
+
 
                 websocket = new WebSocket("ws://127.0.0.1:6789/");
             minus.onclick = function (event) {
@@ -90,6 +102,19 @@
             clear.onclick = function(event) {
                 websocket.send(JSON.stringify({action: "clear"}))
             }
+            colorPicker.addEventListener('change', function(event) {
+                color = event.target.value
+                colorAsInt = parseInt(Number("0x" + color.substring(1)), 10)
+                
+                websocket.send(JSON.stringify({settings: {color: colorAsInt}}))
+            });
+
+            myRange.oninput = function(event) {
+                length = event.target.value
+                lengthAsInt = parseInt(Number(length, 10))
+                websocket.send(JSON.stringify({settings: {stripe_length: lengthAsInt}}));
+            }
+            
             websocket.onmessage = function (event) {
                 data = JSON.parse(event.data);
                 switch (data.type) {
