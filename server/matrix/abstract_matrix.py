@@ -10,7 +10,8 @@ class Matrix(ABC):
         Each color component should be a value 0-255 where 0 is the lowest intensity
         and 255 is the highest intensity.
         """
-        return (white << 24) | (red << 16) | (green << 8) | blue
+
+        return (int(white) << 24) | (int(red) << 16) | (int(green) << 8) | int(blue)
 
     def getRGBValues(self, color):
         """Convert the unsigned integer representation of color into its red, green, 
