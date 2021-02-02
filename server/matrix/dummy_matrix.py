@@ -1,39 +1,30 @@
 from .graphics import *
 from .abstract_matrix import Matrix
+from .dummy_gui import DummyGUI
+
+from multiprocessing import Manager, Queue
 
 PIXEL_SIZE = 20
 
 class DummyMatrix(Matrix):
-    def __init__(self, numRows, numCols, pin=18, brightness=100):
-        super().__init__(numRows, numCols)
-        self.win = GraphWin('Main Window', numCols * PIXEL_SIZE, numRows * PIXEL_SIZE)
-
-        # set background to black
-        self.background = Rectangle(Point(0, 0), Point(numCols * PIXEL_SIZE, numRows * PIXEL_SIZE))
-        self.background.setFill(color_rgb(0, 0, 0))
-
-        # buffer is a sparse matrix that will hold color changes between .show() calls
+    def __init__(self, num_rows, num_cols, pin=18, brightness=100):
+        super().__init__(num_rows, num_cols)
+        self.queue = Queue()
+        self.manager = Manager()
         self.buffer = {}
         
         # matrix will hold rectangle objects which will each represent an LED
         self.matrix = []
-        for i in range(numRows):
-            self.matrix.append([])
-            for j in range(numCols):
-                pos_x, pos_y = self.__findIndex(i, j)
+        for _ in range(num_rows):
+            self.matrix.append([0 for _ in range(num_cols)])
 
-                p1 = Point(pos_y + 1, pos_x + 1,)
-                p2 = Point(pos_y + PIXEL_SIZE - 2, pos_x + PIXEL_SIZE - 2)
-                self.matrix[i].append(Rectangle(p1, p2))
-                self.matrix[i][j].setFill(color_rgb(0, 0, 0))
-
-    def __findIndex(self, row, col):
-        return row * PIXEL_SIZE, col * PIXEL_SIZE
+        
+        self.dummy_gui = DummyGUI([self.queue])
+        self.dummy_gui.start()
 
     def __getitem__(self, index):
-        color = int(self.matrix[index[0]][index[1]].config['fill'][1:], 16)
-        return color
-    
+        return self.matrix[index[0]][index[1]]
+
     def __setitem__(self, index, color):
         if index[0] in self.buffer:
             self.buffer[index[0]][index[1]] = color
@@ -50,20 +41,26 @@ class DummyMatrix(Matrix):
             for j in range(self.cols):
                 self.matrix[i][j].draw(self.win)
 
+    def begin(self):
+        self.queue.put(("begin", ))
+
     def show(self):
         # apply all changes in the buffer
         for i in self.buffer:
             for j in self.buffer[i]:
-                r, g, b, _ = self.getRGBValues(self.buffer[i][j])
-                self.matrix[i][j].setFill(color_rgb(r, g, b))
+                self.matrix[i][j] = self.buffer[i][j]
 
-        # reset the buffer
+        self.queue.put(("show", (self.buffer, )))
+
         self.buffer = {}
 
-    def getBrightness(self):
+    def get_brightness(self):
         return 100
 
-    def setBrightness(self, brightness):
+    def set_brightness(self, brightness):
         return
+
+    def terminate(self):
+        self.queue.put(("terminate", ))
 
     

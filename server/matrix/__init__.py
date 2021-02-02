@@ -7,11 +7,12 @@ except:
 
 try:
     from .dummy_matrix import DummyMatrix
-    from .graphics import *
 except:
     print("Error importing dummy matrix")
 
-def getColor(red, green, blue, white=0):
+from .graphics import *
+
+def get_color(red, green, blue, white=0):
     """Convert the provided red, green, blue color to a 24-bit color value.
     Each color component should be a value 0-255 where 0 is the lowest intensity
     and 255 is the highest intensity.
@@ -19,7 +20,7 @@ def getColor(red, green, blue, white=0):
 
     return (int(white) << 24) | (int(red) << 16) | (int(green) << 8) | int(blue)
 
-def getRGBValues(color):
+def get_rgb_values(color):
     """Convert the unsigned integer representation of color into its red, green, 
     blue (and white) components
     """
@@ -30,4 +31,4 @@ def getRGBValues(color):
 
     return red, green, blue, white
 
-__all__ = ['abstract_matrix', 'dummy_matrix', 'led_matrix', 'getColor', 'getRGBValues']
+__all__ = ['DummyMatrix', 'LEDMatrix', 'get_color', 'get_rgb_values']

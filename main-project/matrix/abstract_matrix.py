@@ -1,9 +1,9 @@
 from abc import ABC, abstractmethod
 
 class Matrix(ABC):
-    def __init__(self, numRows, numCols, pin=18, brightness=100):
-        self.rows = numRows
-        self.cols = numCols
+    def __init__(self, num_rows, num_cols, pin=18, brightness=100):
+        self.rows = num_rows
+        self.cols = num_cols
 
     @abstractmethod
     def __getitem__(self, index):
@@ -26,20 +26,20 @@ class Matrix(ABC):
         pass
 
     @abstractmethod
-    def getBrightness(self):
+    def get_brightness(self):
         """Get LED brightness cap"""
         pass
     
     @abstractmethod
-    def setBrightness(self, brightness):
+    def set_brightness(self, brightness):
         """Set LED brightness cap"""
         pass
 
-    def numRows(self):
+    def num_rows(self):
         """Return total number of rows"""
         return self.rows
     
-    def numCols(self):
+    def num_cols(self):
         """Return total number of columns"""
         return self.cols
 

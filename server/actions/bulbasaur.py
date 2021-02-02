@@ -11,17 +11,17 @@ class Bulbasaur(Action):
         self.path2 = "./images/pokemon/bulbasaur2_trans.png"
 
     def run(self):
-        self.initMatrix()
+        self.init_matrix()
 
         image_processor = ImageProcessor()
 
-        bulbasaur1 = image_processor.loadPNG(self.path1)
-        bulbasaur2 = image_processor.loadPNG(self.path2)
+        bulbasaur1 = image_processor.load_png(self.path1)
+        bulbasaur2 = image_processor.load_png(self.path2)
 
         while self.idx == self.state['idx']:
-            for i in range(self.matrix.numRows()):
-                for j in range(self.matrix.numCols()):
-                   self.matrix[i, j] = self.matrix.getColor(*bulbasaur1[i][j])
+            for i in range(self.matrix.num_rows()):
+                for j in range(self.matrix.num_cols()):
+                   self.matrix[i, j] = self.matrix.get_color(*bulbasaur1[i][j])
 
             self.matrix.show()
             time.sleep(self.settings['wait_ms']/1000.0)
@@ -29,9 +29,9 @@ class Bulbasaur(Action):
             if self.idx != self.state['idx']:
                 return
 
-            for i in range(self.matrix.numRows()):
-                for j in range(self.matrix.numCols()):
-                    self.matrix[i, j] = self.matrix.getColor(*bulbasaur2[i][j])
+            for i in range(self.matrix.num_rows()):
+                for j in range(self.matrix.num_cols()):
+                    self.matrix[i, j] = self.matrix.get_color(*bulbasaur2[i][j])
 
             self.matrix.show()
             time.sleep(self.settings['wait_ms']/1000.0)

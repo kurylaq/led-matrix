@@ -65,6 +65,17 @@
           <div class="button" id="bulbasaur">Bulbasaur</div>
         </div>
         <div class="buttons">
+            <div class="button" id="tetris">Tetris</div>
+        </div>
+        <div class="buttons">
+            <div class="button" id="up">^<br>|</div>
+        </div>
+        <div class="buttons">
+            <div class="button" id="left">&lt-</div>
+            <div class="button" id="down">|<br>v</div>
+            <div class="button" id="right">-&gt</div>
+        </div>
+        <div class="buttons">
           <div class="button" id="clear">Clear</div>
         </div>
         <script>
@@ -76,6 +87,11 @@
                 colorWipe = document.querySelector('#colorWipe'),
                 horizontalStripes = document.querySelector('#horizontalStripes'),
                 bulbasaur = document.querySelector('#bulbasaur'),
+                tetris = document.querySelector('#tetris'),
+                left = document.querySelector('#left'),
+                right = document.querySelector('#right'),
+                up = document.querySelector('#up'),
+                down = document.querySelector('#down'),
                 clear = document.querySelector('#clear'),
 
                 colorPicker = document.querySelector('#colorPicker'),
@@ -103,6 +119,21 @@
             }
             bulbasaur.onclick = function(event) {
                 websocket.send(JSON.stringify({action: "bulbasaur"}))
+            }
+            tetris.onclick = function(event) {
+                websocket.send(JSON.stringify({action: "tetris"}))
+            }
+            up.onclick = function(event) {
+                websocket.send(JSON.stringify({move: "up"}))
+            }
+            down.onclick = function(event) {
+                websocket.send(JSON.stringify({move: "down"}))
+            }
+            right.onclick = function(event) {
+                websocket.send(JSON.stringify({move: "right"}))
+            }
+            left.onclick = function(event) {
+                websocket.send(JSON.stringify({move: "left"}))
             }
             clear.onclick = function(event) {
                 websocket.send(JSON.stringify({action: "clear"}))

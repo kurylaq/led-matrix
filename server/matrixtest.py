@@ -17,7 +17,7 @@ LED_PIN        = 18      # GPIO pin connected to the pixels (18 uses PWM!).
 #LED_PIN        = 10      # GPIO pin connected to the pixels (10 uses SPI /dev/spidev0.0)
 LED_BRIGHTNESS = 150 
 
-def getColor(red, green, blue, white=0):
+def get_color(red, green, blue, white=0):
     """Convert the provided red, green, blue color to a 24-bit color value.
     Each color component should be a value 0-255 where 0 is the lowest intensity
     and 255 is the highest intensity.
@@ -25,7 +25,7 @@ def getColor(red, green, blue, white=0):
     
     return (int(white) << 24) | (int(red) << 16) | (int(green) << 8) | int(blue)
 
-def getRGBValues(color):
+def get_rgb_values(color):
     """Convert the unsigned integer representation of color into its red, green, 
     blue (and white) components
     """
@@ -39,16 +39,16 @@ def getRGBValues(color):
 # Define functions which animate LEDs in various ways.
 def colorWipe(matrix, color, wait_ms=2):
     """Wipe color across display a pixel at a time."""
-    for i in range(matrix.numRows()):
-        for j in range(matrix.numCols()):
+    for i in range(matrix.num_rows()):
+        for j in range(matrix.num_cols()):
             matrix[i, j] = color
             matrix.show()
             time.sleep(wait_ms/1000.0)
 
 def clearMatrix(matrix):
     """Quickly set all color values in the matrix to 0 and show"""
-    for i in range(matrix.numRows()):
-        for j in range(matrix.numCols()):
+    for i in range(matrix.num_rows()):
+        for j in range(matrix.num_cols()):
             matrix[i, j] = 0
     matrix.show()
 
@@ -57,17 +57,17 @@ def horizontalStripes(matrix, color, stripe_length=5, area_width=200, wait_ms=2)
     travelling from left to right
     """
     
-    offsets = [((43 ** i) >> 3) % area_width for i in range(matrix.numRows())]
+    offsets = [((43 ** i) >> 3) % area_width for i in range(matrix.num_rows())]
 
     for i in range(area_width):
         for j, offset in enumerate(offsets):
             prevPos = (offset - 1 + area_width) % area_width
-            if prevPos >= 0 and prevPos < matrix.numCols():
+            if prevPos >= 0 and prevPos < matrix.num_cols():
                 matrix[j, prevPos] = 0
 
             for k in range(stripe_length):
                 currPos = (offset + k) % area_width
-                if currPos >= 0 and currPos < matrix.numCols():
+                if currPos >= 0 and currPos < matrix.num_cols():
                     print_color = matrix[j, currPos]
                     matrix[j, currPos] = color
             offsets[j] += 1
@@ -76,19 +76,19 @@ def horizontalStripes(matrix, color, stripe_length=5, area_width=200, wait_ms=2)
         time.sleep(wait_ms/1000.0)
 
 def bulbasaur(matrix, image_processor, path1, path2, wait_ms=50):
-    bulbasaur1 = image_processor.loadPNG(path1)
-    bulbasaur2 = image_processor.loadPNG(path2)
+    bulbasaur1 = image_processor.load_png(path1)
+    bulbasaur2 = image_processor.load_png(path2)
 
-    for i in range(matrix.numRows()):
-        for j in range(matrix.numCols()):
-            matrix[i, j] = getColor(*bulbasaur1[i][j])
+    for i in range(matrix.num_rows()):
+        for j in range(matrix.num_cols()):
+            matrix[i, j] = get_color(*bulbasaur1[i][j])
 
     matrix.show()
     time.sleep(wait_ms/1000.0)
 
-    for i in range(matrix.numRows()):
-        for j in range(matrix.numCols()):
-            matrix[i, j] = getColor(*bulbasaur2[i][j])
+    for i in range(matrix.num_rows()):
+        for j in range(matrix.num_cols()):
+            matrix[i, j] = get_color(*bulbasaur2[i][j])
 
     matrix.show()
     time.sleep(wait_ms/1000.0)
@@ -99,14 +99,14 @@ def materialsTest(matrix, color_list=[(0, 0, 180), (180, 0, 0), (0, 180, 0)]):
 
     while True:
         for n, (i, j) in enumerate(positions):
-            matrix[i, j] = getColor(*color_list[(n + num_iters) % len(color_list)])
+            matrix[i, j] = get_color(*color_list[(n + num_iters) % len(color_list)])
         num_iters += 1
         matrix.show()
         time.sleep(2)
     # for color in color_list:
     #     while True:
     #     for n, (i, j) in enumerate(positions):
-    #     uint_color = getColor(*color)
+    #     uint_color = get_color(*color)
     #     for j in range(12, 17):
     #         matrix[j, 45] = uint_color
     #     matrix[14, 43] = uint_color
@@ -135,14 +135,14 @@ if __name__ == '__main__':
         if (args.colorWipe):
             while True:
                 print("Color wipe animation")
-                colorWipe(matrix, getColor(180, 0, 0))  # Red wipe
-                # colorWipe(matrix, getColor(180, 0, 0))  # Red wipe
-                # colorWipe(matrix, getColor(0, 180, 0))  # Green wipe
-                # colorWipe(matrix, getColor(0, 0, 180))  # Blue wipe
+                colorWipe(matrix, get_color(180, 0, 0))  # Red wipe
+                # colorWipe(matrix, get_color(180, 0, 0))  # Red wipe
+                # colorWipe(matrix, get_color(0, 180, 0))  # Green wipe
+                # colorWipe(matrix, get_color(0, 0, 180))  # Blue wipe
         elif (args.horizontalStripes):
             while True:
                 print ('Shooting star animations')
-                horizontalStripes(matrix, getColor(0, 0, 180), stripe_length=8, area_width=200, wait_ms=10)
+                horizontalStripes(matrix, get_color(0, 0, 180), stripe_length=8, area_width=200, wait_ms=10)
         elif (args.bulbasaur):
             while True:
                 print("bulbasaur animation")

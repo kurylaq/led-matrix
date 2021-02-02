@@ -11,16 +11,12 @@ class ConnectionManagerProcess(Process):
         self.USERS = set()
         self.pipe_conn = pipe_conn
 
-    # def state_event(self):
-    #         print(json.dumps({"type": "state", **self.STATE}))
-    #         return json.dumps({"type": "state", **self.STATE})
-
-    # async def notify_state(self):
-    #     if self.USERS:  # asyncio.wait doesn't accept an empty list
-    #         message = self.state_event()
-    #         await asyncio.wait([user.send(message) for user in self.USERS])
+        # read index site once to avoid repeat reads
+        with open('./site/index.html', 'r') as file:
+            self.index_site = file.read()
 
     async def get_end_condition(self):
+        """check pipe for end condition and yield to event loop if not found"""
         while True:
             data = self.pipe_conn.poll()
             if data is not False:
@@ -29,6 +25,7 @@ class ConnectionManagerProcess(Process):
                 await asyncio.sleep(0.0001)
 
     async def check_for_end_condition(self):
+        """call get_end_condition and stop the loop if message is stop"""
         end_cond = await self.get_end_condition()
         if end_cond[0] == "stop":
             self.pipe_conn.close()
@@ -43,10 +40,11 @@ class ConnectionManagerProcess(Process):
     async def unregister(self, websocket):
         self.USERS.remove(websocket)
 
-    async def sendData(self, data):
+    async def send_data(self, data):
         self.pipe_conn.send(data)
 
-    async def websocketHandler(self, request):
+    async def websocket_handler(self, request):
+        """handle incoming websocket connection request"""
         ws = web.WebSocketResponse()
         await self.register(ws)
         try:
@@ -56,8 +54,8 @@ class ConnectionManagerProcess(Process):
             async for msg in ws:
                 if msg.type == WSMsgType.TEXT:
                     data = json.loads(msg.data)
-                    if "action" in data or 'settings' in data:
-                        await self.sendData(data)
+                    if len(data) >= 1:
+                        await self.send_data(data)
                     else:
                         logging.error("unsupported event: {}", data)
                 elif msg.type == WSMsgType.ERROR:
@@ -67,43 +65,45 @@ class ConnectionManagerProcess(Process):
             await self.unregister(ws)
             print('websocket connection closed')
 
-    # async def counter(self, websocket, path):
-    #     # register(websocket) sends user_event() to websocket
-    #     await self.register(websocket)
-    #     try:
-    #         await websocket.send(json.dumps({"type": "state", "value": 1}))
-    #         async for message in websocket:
-    #             data = json.loads(message)
-                
-    #     finally:
-    #         await self.unregister(websocket)
+    async def handle_site_request(self, request):
+        resp = web.Response(text=self.index_site, content_type="text/html")
+        return resp
 
-    async def handle(self, request):
-        with open('./site/index.html', 'r') as file:
-            resp = web.Response(text=file.read(), content_type="text/html")
+    async def handle_static_file_request(self, request):
+        try:
+            name = request.match_info['name']
+            with open('./site/' + name, 'r') as file:
+                resp = web.Response(text=file.read(), content_type="text/html")
+                return resp
+        except:
+            print('unable to find such file')
+            resp = web.Response()
+            resp.set_status(404)
             return resp
+            
 
 
     def run(self):
         # WS server example that synchronizes state across clients
         self.event_loop = asyncio.get_event_loop()
         
+        # initialize web app and add relevant routes
         app = web.Application()
-        app.add_routes([web.get('/', self.handle),
-                        web.get('/ws', self.websocketHandler),
-                        web.get('/{name}', self.handle)])
-        
-        # start_server = websockets.serve(self.counter, "localhost", 6789)
+        app.add_routes([web.get('/', self.handle_site_request),
+                        web.get('/ws', self.websocket_handler),
+                        web.get('/{name}', self.handle_static_file_request)])
 
         try:
+            # add web app setup to event loop
             runner = web.AppRunner(app)
             self.event_loop.run_until_complete(runner.setup())
+            # add web app listening to event loop
             site = web.TCPSite(runner, 'localhost', 8080)
             self.event_loop.run_until_complete(site.start())
-
-            # self.event_loop.run_until_complete(start_server)
+            # add listening for end condition to event loop
             self.event_loop.run_until_complete(self.check_for_end_condition())
             
             self.event_loop.run_forever()
         except KeyboardInterrupt:
             print("shutting down server")
+            self.event_loop.close()

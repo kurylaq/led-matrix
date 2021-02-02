@@ -1,6 +1,6 @@
 import time
 import argparse
-from multiprocessing import Pipe, Manager, Queue
+from multiprocessing import Pipe
 
 from connection_manager import ConnectionManagerProcess
 from state_manager import StateManager
@@ -18,21 +18,19 @@ if __name__ == '__main__':
         parent_conn, child_conn = Pipe()
         p = ConnectionManagerProcess(child_conn)
 
-        dict_manager = Manager()
-
-        state = dict_manager.dict()
-        state['settings'] = dict_manager.dict()
+        state = {}
+        state['settings'] = {}
 
         matrix_args = (NUM_ROWS, NUM_COLS, LED_PIN, LED_BRIGHTNESS)
         
-        actionManager = ActionManager(state, matrix_args)
+        action_manager = ActionManager(state, matrix_args)
 
         p.start()
 
         while True:
             data = parent_conn.recv()
             if data is not None:
-                actionManager.receiveMessage(data)
+                action_manager.receive_message(data)
 
         p.join()
 

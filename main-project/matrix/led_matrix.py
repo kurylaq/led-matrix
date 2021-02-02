@@ -3,9 +3,9 @@ try:
     from .abstract_matrix import Matrix
 
     class LEDMatrix(Matrix):
-        def __init__(self, numRows, numCols, pin=18, brightness=100):
-            super().__init__(numRows, numCols)
-            self.strip = Adafruit_NeoPixel(numRows * numCols, pin, brightness=brightness)
+        def __init__(self, num_rows, num_cols, pin=18, brightness=100):
+            super().__init__(num_rows, num_cols)
+            self.strip = Adafruit_NeoPixel(num_rows * num_cols, pin, brightness=brightness)
 
         def __findIndex(self, row, col):
             idx = 1196 - 46 * (row + 1)
@@ -31,11 +31,11 @@ try:
         def show(self):
             self.strip.show()
 
-        def getBrightness(self):
-            return self.strip.getBrightness()
+        def get_brightness(self):
+            return self.strip.get_brightness()
 
-        def setBrightness(self, brightness):
-            self.strip.setBrightness(brightness)
+        def set_brightness(self, brightness):
+            self.strip.set_brightness(brightness)
 except:
     print("rpi_ws281x not found")
 

@@ -36,9 +36,9 @@ if __name__ == '__main__':
 
         # Low light during 19-8 o'clock
         if(8 < now.hour < 19):
-            strip.setBrightness(200)
+            strip.set_brightness(200)
         else:
-            strip.setBrightness(25)
+            strip.set_brightness(25)
 
         hour = now.hour % 12
         minute = now.minute / 5

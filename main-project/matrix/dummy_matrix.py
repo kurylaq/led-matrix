@@ -3,14 +3,14 @@ from .abstract_matrix import Matrix
 
 PIXEL_SIZE = 20
 
-def getColor(red, green, blue, white=0):
+def get_color(red, green, blue, white=0):
     """Convert the provided red, green, blue color to a 24-bit color value.
     Each color component should be a value 0-255 where 0 is the lowest intensity
     and 255 is the highest intensity.
     """
     return (white << 24) | (red << 16) | (green << 8) | blue
 
-def getRGBValues(color):
+def get_rgb_values(color):
     """Convert the unsigned integer representation of color into its red, green, 
     blue (and white) components
     """
@@ -22,12 +22,12 @@ def getRGBValues(color):
     return red, green, blue, white
 
 class DummyMatrix(Matrix):
-    def __init__(self, numRows, numCols, pin=18, brightness=100):
-        super().__init__(numRows, numCols)
-        self.win = GraphWin('Main Window', numCols * PIXEL_SIZE, numRows * PIXEL_SIZE)
+    def __init__(self, num_rows, num_cols, pin=18, brightness=100):
+        super().__init__(num_rows, num_cols)
+        self.win = GraphWin('Main Window', num_cols * PIXEL_SIZE, num_rows * PIXEL_SIZE)
 
         # set background to black
-        self.background = Rectangle(Point(0, 0), Point(numCols * PIXEL_SIZE, numRows * PIXEL_SIZE))
+        self.background = Rectangle(Point(0, 0), Point(num_cols * PIXEL_SIZE, num_rows * PIXEL_SIZE))
         self.background.setFill(color_rgb(0, 0, 0))
 
         # buffer is a sparse matrix that will hold color changes between .show() calls
@@ -35,9 +35,9 @@ class DummyMatrix(Matrix):
         
         # matrix will hold rectangle objects which will each represent an LED
         self.matrix = []
-        for i in range(numRows):
+        for i in range(num_rows):
             self.matrix.append([])
-            for j in range(numCols):
+            for j in range(num_cols):
                 pos_x, pos_y = self.__findIndex(i, j)
 
                 p1 = Point(pos_y + 1, pos_x + 1,)
@@ -72,16 +72,16 @@ class DummyMatrix(Matrix):
         # apply all changes in the buffer
         for i in self.buffer:
             for j in self.buffer[i]:
-                r, g, b, _ = getRGBValues(self.buffer[i][j])
+                r, g, b, _ = get_rgb_values(self.buffer[i][j])
                 self.matrix[i][j].setFill(color_rgb(r, g, b))
 
         # reset the buffer
         self.buffer = {}
 
-    def getBrightness(self):
+    def get_brightness(self):
         return 100
 
-    def setBrightness(self, brightness):
+    def set_brightness(self, brightness):
         return
 
     
