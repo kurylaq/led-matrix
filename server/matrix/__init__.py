@@ -7,10 +7,9 @@ except:
 
 try:
     from .dummy_matrix import DummyMatrix
+    from .graphics import *
 except:
     print("Error importing dummy matrix")
-
-from .graphics import *
 
 def get_color(red, green, blue, white=0):
     """Convert the provided red, green, blue color to a 24-bit color value.
