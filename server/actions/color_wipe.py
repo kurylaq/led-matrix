@@ -2,11 +2,8 @@ from .abstract_action import Action
 import time
 
 class ColorWipe(Action):
-    def run(self):
+    def main_loop(self):
         """Wipe color across display a pixel at a time."""
-
-        self.init_matrix()
-
         while self.idx == self.state['idx']:
             for i in range(self.matrix.num_rows()):
                 for j in range(self.matrix.num_cols()):

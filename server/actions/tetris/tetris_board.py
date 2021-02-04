@@ -1,5 +1,6 @@
 from .tetris_piece import TetrisPiece
 from random import randrange
+from image_processing import TextProcessor
 
 # define grid positions of default-orientation tetris pieces
 STICK = [(0, 0), (0, 1), (0, 2), (0, 3)]
@@ -23,6 +24,9 @@ BASIC_PIECES = [("stick", STICK, (0, 255, 255)),
 WIDTH = 10
 HEIGHT = 20
 
+X_OFFSET = 28
+Y_OFFSET = 4
+
 # start at position x = 18, y = 3
 
 class TetrisBoard:
@@ -32,6 +36,11 @@ class TetrisBoard:
         self.padded_height = self.height + 5
         self.matrix = matrix
         self.game_over = False
+        self.curr_level = 1
+        self.rows_cleared = 0
+        self.next_level_req = 10
+        self.text_processor = TextProcessor()
+        
 
         # rows is our main inner representation of the tetris grid
         self.rows = [[0 for _ in range(self.width)] for _ in range(self.padded_height)]
@@ -43,6 +52,8 @@ class TetrisBoard:
         self.heights = [ 0 for _ in range(self.width)]
 
         self.__build_pieces()
+
+        self.next_piece = self.get_random_piece()
 
     def __build_pieces(self):
         """initialize all pieces (including different rotations) from BASIC_PIECES"""
@@ -72,13 +83,32 @@ class TetrisBoard:
             curr_piece.set_next_piece(self.pieces[name][0])
             self.pieces[name].append(curr_piece)
 
+    def initialize_scores(self):
+        self.score = 0
+
+        with open('./storage/tetris_hi_score.txt', 'r') as file:
+            try:
+                self.hi_score = int(file.readline())
+            except:
+                self.hi_score = 0
+        # hi_score_word_arr = self.text_processor.get_single_line_text_array("best")
+        # hi_score_word_val = self.text_processor.get_single_line_text_array(str(self.hi_score))
+        # score_word_arr = self.text_processor.get_single_line_text_array("score")
+        # score_val_arr = self.text_processor.get_single_line_text_array(str(self.score))
+
+        strs_to_display = ["score:", str(self.score), "best:", str(self.hi_score)]
+        self.arrs_to_display = [self.text_processor.get_single_line_text_array(x) for x in strs_to_display]
+
+        self.text_processor.draw_text_arr(self.matrix, self.arrs_to_display, start_pos=(1, 1))
+        self.matrix.show()
+
     def get_random_piece(self):
         piece_type = self.piece_names[randrange(len(self.piece_names))]
         return self.pieces[piece_type][randrange(4)]
 
     def draw_frame(self):
-        x_left, x_right = 17, 28
-        y_top, y_bottom = self.matrix.num_rows() - 3, self.matrix.num_rows() - 24
+        x_left, x_right = X_OFFSET - 1, X_OFFSET + 10
+        y_top, y_bottom = self.matrix.num_rows() - Y_OFFSET + 1, self.matrix.num_rows() - Y_OFFSET - 20
         color = self.matrix.get_color(100, 100, 100)
 
         for j in range(x_left, x_right + 1):
@@ -94,7 +124,11 @@ class TetrisBoard:
     def draw_pos(self, x, y, color):
         """add a position to matrix without calling matrix.draw()"""
         if self.check_in_bounds(x, y) and y < self.height:
-            self.matrix[self.matrix.num_rows() - y - 4, x + 18] = color
+            self.matrix[self.matrix.num_rows() - y - Y_OFFSET, x + X_OFFSET] = color
+
+    def draw_pos_out_of_bounds(self, x, y, color):
+        """add a position to matrix without calling matrix.draw()"""
+        self.matrix[self.matrix.num_rows() - y - Y_OFFSET, x + X_OFFSET] = color
 
     def update_matrix(self):
         self.matrix.show()
@@ -113,6 +147,20 @@ class TetrisBoard:
             x_pos, y_pos = piece_x + relative_x, piece_y + relative_y
             self.draw_pos(x_pos, y_pos, 0)
 
+    def draw_next_piece(self):
+        """add the next piece to display without calling matrix.draw()"""
+        start_x, start_y = 13, 16
+        for relative_x, relative_y in self.next_piece.body_arr:
+            x_pos, y_pos = start_x + relative_x, start_y + relative_y
+            self.draw_pos_out_of_bounds(x_pos, y_pos, self.next_piece.color)
+
+    def undraw_next_piece(self):
+        """set the color of the next piece to black without calling matrix.draw()"""
+        start_x, start_y = 13, 16
+        for relative_x, relative_y in self.next_piece.body_arr:
+            x_pos, y_pos = start_x + relative_x, start_y + relative_y
+            self.draw_pos_out_of_bounds(x_pos, y_pos, 0)
+
     def draw_grid(self):
         """add all grid blocks to matrix without calling draw()"""
         for i in range(self.height):
@@ -128,6 +176,12 @@ class TetrisBoard:
             self.rows[y_pos][x_pos] = self.curr_piece.color
             self.heights[x_pos] = max(self.heights[x_pos], self.curr_piece.get_curr_pos()[1] + y_pos)
             self.row_counts[y_pos] += 1
+
+    def update_rows_cleared(self, curr_rows_cleared):
+        self.rows_cleared += curr_rows_cleared
+        if self.rows_cleared > self.next_level_req:
+            self.curr_level += 1
+            self.next_level_req += self.curr_level * 10
 
     def clear_rows(self):
         """clear all rows that have been completed and remove them from the grid"""
@@ -159,9 +213,33 @@ class TetrisBoard:
         
         # if we have cleared a row, recalculate row_counts
         if len(rows_to_clear) > 0:
+            self.update_scores(len(rows_to_clear))
+            self.update_rows_cleared(len(rows_to_clear))
             self.row_counts = [sum([(1 if x > 0 else 0) for x in row]) for row in self.rows]
 
         return len(rows_to_clear)
+
+    def update_scores(self, rows_cleared):
+        row_vals = [0, 4, 10, 30, 120]
+        self.score += row_vals[rows_cleared] * self.curr_level
+
+        # if new hi-score, update hi-score and write to storage
+        if self.score > self.hi_score:
+            self.hi_score = self.score
+            self.arrs_to_display[3] = self.text_processor.get_single_line_text_array(str(self.hi_score))
+
+            # store hi-score in file
+            with open('./storage/tetris_hi_score.txt', 'w') as file:
+                try:
+                    file.write(str(self.hi_score))
+                except:
+                    print("error writing hi-score to file")
+        
+        self.arrs_to_display[1] = self.text_processor.get_single_line_text_array(str(self.score))
+        self.text_processor.draw_text_arr(self.matrix, self.arrs_to_display, start_pos=(1, 1))
+        self.matrix.show()
+        
+
 
     def __detect_collision(self, piece_pos, collision_positions, x_offset=0, y_offset=0):
         """Helper function to detect left, right and under collisions"""
@@ -201,11 +279,16 @@ class TetrisBoard:
         return False
 
     def drop_random_piece(self):
-        to_drop = self.get_random_piece()
+        to_drop = self.next_piece
         start_x, start_y = int((self.width / 2) - (to_drop.width / 2)), self.height - 1
         to_drop.set_curr_pos(start_x, start_y)
         self.curr_piece = to_drop
         self.draw_curr_piece()
+
+        self.undraw_next_piece()
+        self.next_piece = self.get_random_piece()
+        self.draw_next_piece()
+
         self.update_matrix()
 
     def rotate(self):

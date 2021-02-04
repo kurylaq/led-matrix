@@ -1,6 +1,7 @@
 from PIL import Image
 import numpy as np
 
+
 class ImageProcessor:
     def __init__(self):
         pass

@@ -4,6 +4,7 @@ from .horizontal_stripes import HorizontalStripes
 from .bulbasaur import Bulbasaur
 from .clear import Clear
 from .tetris import Tetris
+from .text import Text
 
 from queue import Queue
 
@@ -22,7 +23,8 @@ class ActionManager(object):
             "horizontalStripes": HorizontalStripes,
             "bulbasaur": Bulbasaur,
             "clear": Clear,
-            "tetris": Tetris
+            "tetris": Tetris,
+            "text": Text
         }
 
     def receive_message(self, data):
@@ -58,9 +60,8 @@ class ActionManager(object):
             if self.state['action'] == 'tetris':
                 self.state['queue'] = Queue()
             if self.current_action is not None:
-                self.current_action.terminate()
+                self.current_action.join()
             self.current_action = self.action_dict[self.state['action']](args=[self.state, self.matrix_args, self.curr_idx])
-            self.current_action.setDaemon(True)
             self.current_action.start()
 
             

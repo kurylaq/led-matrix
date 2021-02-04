@@ -17,13 +17,10 @@ class HorizontalStripes(Action):
 
         self.area_width = self.settings['area_width']
 
-    def run(self):
+    def main_loop(self):
         """Low-brightness animation to display a loop of horizontal stripes 
         travelling from left to right
         """
-
-        self.init_matrix()
-        
         # create offsets at beginning of animation
         offsets = [((43 ** i) >> 3) % self.area_width for i in range(self.matrix.num_rows())]
 

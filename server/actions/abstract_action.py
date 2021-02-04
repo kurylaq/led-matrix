@@ -24,12 +24,19 @@ class Action(Thread):
             if key not in self.settings:
                 self.settings[key] = default_settings[key]
 
-    def init_matrix(self):
+    def run(self):
         self.matrix = Matrix(*self.matrix_args)
         self.matrix.begin()
+        self.main_loop()
+        self.matrix.terminate()
 
-    def run(self):
+    def main_loop(self):
         pass
+
+    def clear_matrix(self):
+        for i in range(self.matrix.num_rows()):
+            for j in range(self.matrix.num_cols()):
+                self.matrix[i, j] = 0
 
     def terminate(self):
         if self.matrix is not None:

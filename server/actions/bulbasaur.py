@@ -1,7 +1,7 @@
 import time
 
 from .abstract_action import Action
-from .image_processing import ImageProcessor
+from image_processing import ImageProcessor
 
 class Bulbasaur(Action):
     def __init__(self, args=[]):
@@ -10,9 +10,7 @@ class Bulbasaur(Action):
         self.path1 = "./images/pokemon/bulbasaur1_trans.png"
         self.path2 = "./images/pokemon/bulbasaur2_trans.png"
 
-    def run(self):
-        self.init_matrix()
-
+    def main_loop(self):
         image_processor = ImageProcessor()
 
         bulbasaur1 = image_processor.load_png(self.path1)
