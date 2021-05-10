@@ -130,18 +130,51 @@ text</textarea>
             tetris.onclick = function(event) {
                 websocket.send(JSON.stringify({action: "tetris"}))
             }
-            up.onclick = function(event) {
+
+            let upFunc = function(event) {
                 websocket.send(JSON.stringify({move: "up"}))
             }
-            down.onclick = function(event) {
+            let downFunc = function(event) {
                 websocket.send(JSON.stringify({move: "down"}))
             }
-            right.onclick = function(event) {
-                websocket.send(JSON.stringify({move: "right"}))
-            }
-            left.onclick = function(event) {
+            let leftFunc = function(event) {
                 websocket.send(JSON.stringify({move: "left"}))
             }
+            let rightFunc = function(event) {
+                websocket.send(JSON.stringify({move: "right"}))
+            
+            }
+
+            up.onclick = upFunc
+            down.onclick = downFunc
+            right.onclick = leftFunc
+            left.onclick = rightFunc
+
+            window.addEventListener('keydown', (e) => {
+                switch (event.key) {
+                    case "Down": // IE/Edge specific value
+                    case "ArrowDown":
+                        downFunc();
+                        break;
+                    case "Enter":
+                    case "Space":
+                    case "Up": // IE/Edge specific value
+                    case "ArrowUp":
+                        upFunc();
+                        break;
+                    case "Left": // IE/Edge specific value
+                    case "ArrowLeft":
+                        leftFunc()
+                        break;
+                    case "Right": // IE/Edge specific value
+                    case "ArrowRight":
+                        rightFunc()
+                        break;
+                    default:
+                        return;
+                }
+            });
+
             textButton.onclick = function(event) {
                 websocket.send(JSON.stringify({action: "text", text: textInput.value}))
             }
